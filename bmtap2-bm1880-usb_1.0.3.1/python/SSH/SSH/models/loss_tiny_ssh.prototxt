@@ -1,0 +1,856 @@
+# ***************************************************************** #
+# SSH: Single Stage Headless Face Detector
+# Test Prototxt
+# Written by Mahyar Najibi
+# ***************************************************************** #
+
+name: "TinySSH"
+
+layer {
+  name: 'input-data'
+  type: 'Python'
+  top: 'data'
+  top: 'im_info'
+  top: 'gt_boxes'
+  python_param {
+    module: 'roi_data_layer.layer'
+    layer: 'RoIDataLayer'
+    param_str: "'num_classes': 2"
+  }
+}
+
+layer {
+  name: "conv1_1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1_1"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 16
+    pad: 1
+    kernel_size: 3
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "relu1_1"
+  type: "ReLU"
+  bottom: "conv1_1"
+  top: "conv1_1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1_1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_1"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2_1"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 32
+    pad: 1
+    kernel_size: 3
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "relu2_1"
+  type: "ReLU"
+  bottom: "conv2_1"
+  top: "conv2_1"
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2_1"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv3_1"
+  type: "Convolution"
+  bottom: "pool2"
+  top: "conv3_1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 64
+    pad: 1
+    kernel_size: 3
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "relu3_1"
+  type: "ReLU"
+  bottom: "conv3_1"
+  top: "conv3_1"
+}
+layer {
+  name: "pool3"
+  type: "Pooling"
+  bottom: "conv3_1"
+  top: "pool3"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv4_1"
+  type: "Convolution"
+  bottom: "pool3"
+  top: "conv4_1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 128
+    pad: 1
+    kernel_size: 3
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "relu4_1"
+  type: "ReLU"
+  bottom: "conv4_1"
+  top: "conv4_1"
+}
+layer {
+  name: "pool4"
+  type: "Pooling"
+  bottom: "conv4_1"
+  top: "pool4"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv5_1"
+  type: "Convolution"
+  bottom: "pool4"
+  top: "conv5_1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 128
+    pad: 1
+    kernel_size: 3
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "relu5_1"
+  type: "ReLU"
+  bottom: "conv5_1"
+  top: "conv5_1"
+}
+layer {
+  name: "pool5"
+  type: "Pooling"
+  bottom: "conv5_1"
+  top: "pool5"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+
+
+
+#========== M3@SSH =========
+layer {
+  name: "m3@ssh_3x3"
+  type: "Convolution"
+  bottom: "pool5"
+  top: "m3@ssh_3x3_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name:'m3@ssh_3x3_param1'}
+  param { lr_mult: 2.0 decay_mult: 0 name:'m3@ssh_3x3_param2'}
+  convolution_param {
+    num_output: 64
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+# Dim red
+layer {
+  name: "m3@ssh_dimred"
+  type: "Convolution"
+  bottom: "pool5"
+  top: "m3@ssh_dimred_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: 'm3@ssh_dimred_param1' }
+  param { lr_mult: 2.0 decay_mult: 0 name: 'm3@ssh_dimred_param2'}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "m3@ssh_dimred_relu"
+  type: "ReLU"
+  bottom: "m3@ssh_dimred_output"
+  top: "m3@ssh_dimred_output"
+}
+# 5x5
+layer {
+  name: "m3@ssh_5x5"
+  type: "Convolution"
+  bottom: "m3@ssh_dimred_output"
+  top: "m3@ssh_5x5_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: 'm3@ssh_5x5_param1'}
+  param { lr_mult: 2.0 decay_mult: 0 name: 'm3@ssh_5x5_param2'}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+#7x7
+layer {
+  name: "m3@ssh_7x7-1"
+  type: "Convolution"
+  bottom: "m3@ssh_dimred_output"
+  top: "m3@ssh_7x7-1_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: 'm3@ssh_7x7-1_param1'}
+  param { lr_mult: 2.0 decay_mult: 0 name: 'm3@ssh_7x7-1_param2'}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "m3@ssh_7x7-1_relu"
+  type: "ReLU"
+  bottom: "m3@ssh_7x7-1_output"
+  top: "m3@ssh_7x7-1_output"
+}
+layer {
+  name: "m3@ssh_7x7"
+  type: "Convolution"
+  bottom: "m3@ssh_7x7-1_output"
+  top: "m3@ssh_7x7_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: 'm3@ssh_7x7_param1'}
+  param { lr_mult: 2.0 decay_mult: 0 name: 'm3@ssh_7x7_param2'}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer{
+  name: "m3@ssh_output"
+  type: "Concat"
+  bottom: "m3@ssh_3x3_output"
+  bottom: "m3@ssh_5x5_output"
+  bottom: "m3@ssh_7x7_output"
+  top: "m3@ssh_output"
+  concat_param{
+      axis: 1
+  }
+}
+layer {
+  name: "m3@ssh_output_relu"
+  type: "ReLU"
+  bottom: "m3@ssh_output"
+  top: "m3@ssh_output"
+}
+layer {
+  name: "m3@ssh_cls_score"
+  type: "Convolution"
+  bottom: "m3@ssh_output"
+  top: "m3@ssh_cls_score_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: 'm3@ssh_cls_score_param1'}
+  param { lr_mult: 2.0 decay_mult: 0 name: 'm3@ssh_cls_score_param2'}
+  convolution_param {
+    num_output: 4   # 2(bg/fg) * 21(anchors)
+    kernel_size: 1 pad: 0 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "m3@ssh_bbox_pred"
+  type: "Convolution"
+  bottom: "m3@ssh_output"
+  top: "m3@ssh_bbox_pred_output"
+  param { lr_mult: 1.0 decay_mult: 1.0}
+  param { lr_mult: 2.0 decay_mult: 0}
+  convolution_param {
+    num_output: 8
+    kernel_size: 1 pad: 0 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+   name: "m3@ssh_cls_reshape"
+   type: "Reshape"
+   bottom: "m3@ssh_cls_score_output"
+   top: "m3@ssh_cls_score_reshape_output"
+   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
+}
+layer {
+  name: "m3@ssh_cls_prob"
+  type: "Softmax"
+  bottom: "m3@ssh_cls_score_reshape_output"
+  top: "m3@ssh_cls_prob_output"
+}
+layer {
+  name: 'm3@ssh_cls_prob_reshape'
+  type: 'Reshape'
+  bottom: 'm3@ssh_cls_prob_output'
+  top: 'm3@ssh_cls_prob_reshape_output'
+  reshape_param { shape { dim: 0 dim:4  dim: -1 dim: 0 } }
+}
+layer {
+  name: 'm3@ssh_proposal'
+  type: 'Python'
+  bottom: 'm3@ssh_cls_prob_reshape_output'
+  bottom: 'm3@ssh_bbox_pred_output'
+  bottom: 'im_info'
+  top: 'm3@ssh_boxes'
+  top: 'm3@ssh_cls_prob'
+  python_param {
+    module: 'SSH.layers.proposal_layer'
+    layer: 'ProposalLayer'
+    param_str: "{'feat_stride': 32, 'base_size': 4, 'scales': [32,64], 'ratios':[1,]}"
+  }
+}
+
+
+
+
+#========== M2@SSH =========
+layer {
+  name: "m2@ssh_3x3"
+  type: "Convolution"
+  bottom: "pool4"
+  top: "m2@ssh_3x3_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m2@ssh_3x3_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m2@ssh_3x3_param2"}
+  convolution_param {
+    num_output: 64
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+# Dim red
+layer {
+  name: "m2@ssh_dimred"
+  type: "Convolution"
+  bottom: "pool4"
+  top: "m2@ssh_dimred_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m2@ssh_dimred_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m2@ssh_dimred_param2"}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "m2@ssh_dimred_relu"
+  type: "ReLU"
+  bottom: "m2@ssh_dimred_output"
+  top: "m2@ssh_dimred_output"
+}
+# 5x5
+layer {
+  name: "m2@ssh_5x5"
+  type: "Convolution"
+  bottom: "m2@ssh_dimred_output"
+  top: "m2@ssh_5x5_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m2@ssh_5x5_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m2@ssh_5x5_param2"}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+#7x7
+layer {
+  name: "m2@ssh_7x7-1"
+  type: "Convolution"
+  bottom: "m2@ssh_dimred_output"
+  top: "m2@ssh_7x7-1_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m2@ssh_7x7-1_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m2@ssh_7x7-1_param2"}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "m2@ssh_7x7-1_relu"
+  type: "ReLU"
+  bottom: "m2@ssh_7x7-1_output"
+  top: "m2@ssh_7x7-1_output"
+}
+
+layer {
+  name: "m2@ssh_7x7"
+  type: "Convolution"
+  bottom: "m2@ssh_7x7-1_output"
+  top: "m2@ssh_7x7_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m2@ssh_7x7_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m2@ssh_7x7_param2"}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+
+layer{
+  name: "m2@ssh_output"
+  type: "Concat"
+  bottom: "m2@ssh_3x3_output"
+  bottom: "m2@ssh_5x5_output"
+  bottom: "m2@ssh_7x7_output"
+  top: "m2@ssh_output"
+  concat_param{
+      axis: 1
+  }
+}
+
+layer {
+  name: "m2@ssh_output_relu"
+  type: "ReLU"
+  bottom: "m2@ssh_output"
+  top: "m2@ssh_output"
+}
+layer {
+  name: "m2@ssh_cls_score"
+  type: "Convolution"
+  bottom: "m2@ssh_output"
+  top: "m2@ssh_cls_score_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m2@ssh_cls_score_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m2@ssh_cls_score_param2"}
+  convolution_param {
+    num_output: 4   # 2(bg/fg) * 21(anchors)
+    kernel_size: 1 pad: 0 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "m2@ssh_bbox_pred"
+  type: "Convolution"
+  bottom: "m2@ssh_output"
+  top: "m2@ssh_bbox_pred_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 }
+  param { lr_mult: 2.0 decay_mult: 0 }
+  convolution_param {
+    num_output: 8
+    kernel_size: 1 pad: 0 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+   bottom: "m2@ssh_cls_score_output"
+   top: "m2@ssh_cls_score_reshape_output"
+   name: "m2@ssh_cls_reshape"
+   type: "Reshape"
+   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
+}
+
+
+layer {
+  name: "m2@ssh_cls_prob"
+  type: "Softmax"
+  bottom: "m2@ssh_cls_score_reshape_output"
+  top: "m2@ssh_cls_prob_output"
+}
+layer {
+  name: 'm2@ssh_cls_prob_reshape'
+  type: 'Reshape'
+  bottom: 'm2@ssh_cls_prob_output'
+  top: 'm2@ssh_cls_prob_reshape_output'
+  reshape_param { shape { dim: 0 dim:4  dim: -1 dim: 0 } }
+}
+layer {
+  name: 'm2@ssh_proposal'
+  type: 'Python'
+  bottom: 'm2@ssh_cls_prob_reshape_output'
+  bottom: 'm2@ssh_bbox_pred_output'
+  bottom: 'im_info'
+  top: 'm2@ssh_boxes'
+  top: 'm2@ssh_cls_prob'
+  python_param {
+    module: 'SSH.layers.proposal_layer'
+    layer: 'ProposalLayer'
+    param_str: "{'feat_stride': 16, 'base_size': 4, 'scales': [8,16], 'ratios':[1,]}"
+  }
+}
+
+
+
+
+#========== M1@SSH =========
+layer {
+  name: "m1@ssh_3x3"
+  type: "Convolution"
+  bottom: "pool3"
+  top: "m1@ssh_3x3_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m1@ssh_3x3_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m1@ssh_3x3_param2"}
+  convolution_param {
+    num_output: 64
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+# Dim red
+layer {
+  name: "m1@ssh_dimred"
+  type: "Convolution"
+  bottom: "pool3"
+  top: "m1@ssh_dimred_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m1@ssh_dimred_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m1@ssh_dimred_param2"}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "m1@ssh_dimred_relu"
+  type: "ReLU"
+  bottom: "m1@ssh_dimred_output"
+  top: "m1@ssh_dimred_output"
+}
+# 5x5
+layer {
+  name: "m1@ssh_5x5"
+  type: "Convolution"
+  bottom: "m1@ssh_dimred_output"
+  top: "m1@ssh_5x5_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m1@ssh_5x5_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m1@ssh_5x5_param2"}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+#7x7
+layer {
+  name: "m1@ssh_7x7-1"
+  type: "Convolution"
+  bottom: "m1@ssh_dimred_output"
+  top: "m1@ssh_7x7-1_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m1@ssh_7x7-1_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m1@ssh_7x7-1_param2"}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "m1@ssh_7x7-1_relu"
+  type: "ReLU"
+  bottom: "m1@ssh_7x7-1_output"
+  top: "m1@ssh_7x7-1_output"
+}
+
+layer {
+  name: "m1@ssh_7x7"
+  type: "Convolution"
+  bottom: "m1@ssh_7x7-1_output"
+  top: "m1@ssh_7x7_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m1@ssh_7x7_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m1@ssh_7x7_param2"}
+  convolution_param {
+    num_output: 32
+    kernel_size: 3 pad: 1 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+
+layer{
+  name: "m1@ssh_output"
+  type: "Concat"
+  bottom: "m1@ssh_3x3_output"
+  bottom: "m1@ssh_5x5_output"
+  bottom: "m1@ssh_7x7_output"
+  top: "m1@ssh_output"
+  concat_param{
+      axis: 1
+  }
+}
+
+layer {
+  name: "m1@ssh_output_relu"
+  type: "ReLU"
+  bottom: "m1@ssh_output"
+  top: "m1@ssh_output"
+}
+layer {
+  name: "m1@ssh_cls_score"
+  type: "Convolution"
+  bottom: "m1@ssh_output"
+  top: "m1@ssh_cls_score_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 name: "m1@ssh_cls_score_param1"}
+  param { lr_mult: 2.0 decay_mult: 0 name: "m1@ssh_cls_score_param2"}
+  convolution_param {
+    num_output: 4   # 2(bg/fg) * 21(anchors)
+    kernel_size: 1 pad: 0 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+  name: "m1@ssh_bbox_pred"
+  type: "Convolution"
+  bottom: "m1@ssh_output"
+  top: "m1@ssh_bbox_pred_output"
+  param { lr_mult: 1.0 decay_mult: 1.0 }
+  param { lr_mult: 2.0 decay_mult: 0 }
+  convolution_param {
+    num_output: 8
+    kernel_size: 1 pad: 0 stride: 1
+    weight_filler { type: "gaussian" std: 0.01 }
+    bias_filler { type: "constant" value: 0 }
+  }
+}
+layer {
+   bottom: "m1@ssh_cls_score_output"
+   top: "m1@ssh_cls_score_reshape_output"
+   name: "m1@ssh_cls_reshape"
+   type: "Reshape"
+   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
+}
+layer {
+  name: "m1@ssh_cls_prob"
+  type: "Softmax"
+  bottom: "m1@ssh_cls_score_reshape_output"
+  top: "m1@ssh_cls_prob_output"
+}
+layer {
+  name: 'm1@ssh_cls_prob_reshape'
+  type: 'Reshape'
+  bottom: 'm1@ssh_cls_prob_output'
+  top: 'm1@ssh_cls_prob_reshape_output'
+  reshape_param { shape { dim: 0 dim:4  dim: -1 dim: 0 } }
+}
+layer {
+  name: 'm1@ssh_proposal'
+  type: 'Python'
+  bottom: 'm1@ssh_cls_prob_reshape_output'
+  bottom: 'm1@ssh_bbox_pred_output'
+  bottom: 'im_info'
+  top: 'm1@ssh_boxes'
+  top: 'm1@ssh_cls_prob'
+  python_param {
+    module: 'SSH.layers.proposal_layer'
+    layer: 'ProposalLayer'
+    param_str: "{'feat_stride': 8, 'base_size': 4, 'scales': [2,4], 'ratios':[1,]}"
+  }
+}
+
+
+
+
+# CONCAT ALL detections
+layer{
+  name: "ssh_cls_prob"
+  type: "Concat"
+  bottom: "m1@ssh_cls_prob"
+  bottom: "m2@ssh_cls_prob"
+  bottom: "m3@ssh_cls_prob"
+  top: "ssh_cls_prob"
+  concat_param{
+    axis: 0
+  }
+}
+
+layer{
+  name: "ssh_boxes"
+  type: "Concat"
+  bottom: "m1@ssh_boxes"
+  bottom: "m2@ssh_boxes"
+  bottom: "m3@ssh_boxes"
+  top: "ssh_boxes"
+  concat_param{
+    axis: 0
+  }
+}
+
+# Comput loss
+layer {
+  name: 'm1@ssh_target_layer'
+  type: 'Python'
+  bottom: 'm1@ssh_cls_score_output'
+  bottom: 'gt_boxes'
+  bottom: 'im_info'
+  bottom: 'data'
+  top: 'm1@ssh_anchor_labels'
+  top: 'm1@ssh_reg_tragets'
+  top: 'm1@ssh_reg_inside_weights'
+  top: 'm1@ssh_reg_outside_weights'
+  python_param {
+    module: 'SSH.layers.anchor_target_layer'
+    layer: 'AnchorTargetLayer'
+    param_str: "{'feat_stride': 8, 'base_size': 4, 'scales': [2,4], 'ratios':[1,], 'allowed_border': 16}"
+  }
+}
+layer {
+  name: "m1@ssh_cls_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "m1@ssh_cls_score_reshape_output"
+  bottom: "m1@ssh_anchor_labels"
+  propagate_down: 1
+  propagate_down: 0
+  top: "m1@ssh_cls_loss"
+  loss_weight: 1
+  loss_param {
+    ignore_label: -1
+    normalize: true
+  }
+}
+
+layer {
+  name: 'm2@ssh_target_layer'
+  type: 'Python'
+  bottom: 'm2@ssh_cls_score_output'
+  bottom: 'gt_boxes'
+  bottom: 'im_info'
+  bottom: 'data'
+  top: 'm2@ssh_anchor_labels'
+  top: 'm2@ssh_reg_tragets'
+  top: 'm2@ssh_reg_inside_weights'
+  top: 'm2@ssh_reg_outside_weights'
+  python_param {
+    module: 'SSH.layers.anchor_target_layer'
+    layer: 'AnchorTargetLayer'
+    param_str: "{'feat_stride': 8, 'base_size': 4, 'scales': [2,4], 'ratios':[1,], 'allowed_border': 16}"
+  }
+}
+layer {
+  name: "m2@ssh_cls_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "m2@ssh_cls_score_reshape_output"
+  bottom: "m2@ssh_anchor_labels"
+  propagate_down: 1
+  propagate_down: 0
+  top: "m2@ssh_cls_loss"
+  loss_weight: 1
+  loss_param {
+    ignore_label: -1
+    normalize: true
+  }
+}
+
+layer {
+  name: 'm3@ssh_target_layer'
+  type: 'Python'
+  bottom: 'm3@ssh_cls_score_output'
+  bottom: 'gt_boxes'
+  bottom: 'im_info'
+  bottom: 'data'
+  top: 'm3@ssh_anchor_labels'
+  top: 'm3@ssh_reg_tragets'
+  top: 'm3@ssh_reg_inside_weights'
+  top: 'm3@ssh_reg_outside_weights'
+  python_param {
+    module: 'SSH.layers.anchor_target_layer'
+    layer: 'AnchorTargetLayer'
+    param_str: "{'feat_stride': 8, 'base_size': 4, 'scales': [2,4], 'ratios':[1,], 'allowed_border': 16}"
+  }
+}
+layer {
+  name: "m3@ssh_cls_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "m3@ssh_cls_score_reshape_output"
+  bottom: "m3@ssh_anchor_labels"
+  propagate_down: 1
+  propagate_down: 0
+  top: "m3@ssh_cls_loss"
+  loss_weight: 1
+  loss_param {
+    ignore_label: -1
+    normalize: true
+  }
+}
+#layer {
+#  name: "m1@ssh_reg_loss"
+#  type: "SmoothL1Loss"
+#  bottom: "m1@ssh_bbox_pred_output"
+#  bottom: "m1@ssh_reg_tragets"
+#  bottom: 'm1@ssh_reg_inside_weights'
+#  bottom: 'm1@ssh_reg_outside_weights'
+#  top: "m1@ssh_reg_loss"
+#  loss_weight: 1
+#  smooth_l1_loss_param { sigma: 3.0 }
+#}

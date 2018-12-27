@@ -1,0 +1,452 @@
+name: "LeNet_sanity-check_group_optimized"
+layer {
+  name: "start"
+  type: "start"
+  top: "start"
+  output_shape {
+    dim: 1
+    dim: 1
+    dim: 28
+    dim: 28
+  }
+  global_output: 0
+  start_param {
+    input_offset: 0
+  }
+}
+layer {
+  name: "group0"
+  type: "tl_group"
+  bottom: "start"
+  top: "start_0_0_0"
+  global_input: 0
+}
+layer {
+  name: "conv1_1_0_0_0"
+  type: "tl_convolution"
+  bottom: "start_0_0_0"
+  top: "conv1_1_0_0_0"
+  calib_id: "conv1_1"
+  input_shape {
+    dim: 1
+    dim: 1
+    dim: 28
+    dim: 28
+  }
+  output_shape {
+    dim: 1
+    dim: 20
+    dim: 24
+    dim: 24
+  }
+  tl_convolution_param {
+    input: 1040
+    output: 1824
+    weight: 1000
+    bias: 1025
+    group: 1
+    bias_term: true
+    kernel_size: 5
+    kernel_size: 5
+    stride: 1
+    stride: 1
+    dilation: 1
+    dilation: 1
+    pad: 0
+    pad: 0
+    pad: 0
+    pad: 0
+    result_add: false
+    if_relu: false
+    use_winograd: false
+    h_slice_skip_first: false
+    h_slice_skip_last: false
+  }
+  tl_transport_param {
+    name: "conv1_1_bias_0"
+    global_shape {
+      dim: 2
+      dim: 20
+      dim: 1
+      dim: 1
+    }
+    local_shape {
+      dim: 2
+      dim: 20
+      dim: 1
+      dim: 1
+    }
+    global_offset: 500
+    local_address: 1025
+    direction: 0
+    transpose: false
+    aligned: false
+    stage: PRE
+    data_type: COEFF
+  }
+  tl_transport_param {
+    name: "conv1_1_weight"
+    global_shape {
+      dim: 1
+      dim: 20
+      dim: 25
+      dim: 1
+    }
+    local_shape {
+      dim: 1
+      dim: 20
+      dim: 25
+      dim: 1
+    }
+    global_offset: 0
+    local_address: 1000
+    direction: 0
+    transpose: false
+    aligned: false
+    stage: PRE
+    data_type: COEFF
+  }
+  tl_transport_param {
+    name: "start"
+    global_shape {
+      dim: 1
+      dim: 1
+      dim: 28
+      dim: 28
+    }
+    local_shape {
+      dim: 1
+      dim: 1
+      dim: 28
+      dim: 28
+    }
+    global_offset: 0
+    local_address: 1040
+    direction: 0
+    transpose: false
+    aligned: true
+    stage: PRE
+  }
+  tl_transport_param {
+    name: "conv2_1_weight"
+    global_shape {
+      dim: 1
+      dim: 50
+      dim: 25
+      dim: 20
+    }
+    local_shape {
+      dim: 1
+      dim: 50
+      dim: 25
+      dim: 20
+    }
+    global_offset: 540
+    local_address: 0
+    direction: 0
+    transpose: false
+    aligned: false
+    data_type: COEFF
+  }
+}
+layer {
+  name: "pool1_1_0_0_0"
+  type: "tl_pooling"
+  bottom: "conv1_1_0_0_0"
+  top: "pool1_1_0_0_0"
+  calib_id: "pool1_1"
+  input_shape {
+    dim: 1
+    dim: 20
+    dim: 24
+    dim: 24
+  }
+  output_shape {
+    dim: 1
+    dim: 20
+    dim: 12
+    dim: 12
+  }
+  tl_pooling_param {
+    input: 1824
+    output: 1008
+    avg_pool: false
+    kernel_size: 2
+    kernel_size: 2
+    stride: 2
+    stride: 2
+    pad: 0
+    pad: 0
+    pad: 0
+    pad: 0
+    if_relu: false
+  }
+  tl_transport_param {
+    name: "conv2_1_bias_0"
+    global_shape {
+      dim: 2
+      dim: 50
+      dim: 1
+      dim: 1
+    }
+    local_shape {
+      dim: 2
+      dim: 50
+      dim: 1
+      dim: 1
+    }
+    global_offset: 25540
+    local_address: 1000
+    direction: 0
+    transpose: false
+    aligned: false
+    data_type: COEFF
+  }
+}
+layer {
+  name: "conv2_1_0_0_0"
+  type: "tl_convolution"
+  bottom: "pool1_1_0_0_0"
+  top: "conv2_1_0_0_0"
+  calib_id: "conv2_1"
+  input_shape {
+    dim: 1
+    dim: 20
+    dim: 12
+    dim: 12
+  }
+  output_shape {
+    dim: 1
+    dim: 50
+    dim: 8
+    dim: 8
+  }
+  tl_convolution_param {
+    input: 1008
+    output: 1152
+    weight: 0
+    bias: 1000
+    group: 1
+    bias_term: true
+    kernel_size: 5
+    kernel_size: 5
+    stride: 1
+    stride: 1
+    dilation: 1
+    dilation: 1
+    pad: 0
+    pad: 0
+    pad: 0
+    pad: 0
+    result_add: false
+    if_relu: false
+    use_winograd: false
+    h_slice_skip_first: false
+    h_slice_skip_last: false
+  }
+}
+layer {
+  name: "pool2_1_0_0_0"
+  type: "tl_pooling"
+  bottom: "conv2_1_0_0_0"
+  top: "pool2_1_0_0_0"
+  calib_id: "pool2_1"
+  input_shape {
+    dim: 1
+    dim: 50
+    dim: 8
+    dim: 8
+  }
+  output_shape {
+    dim: 1
+    dim: 50
+    dim: 4
+    dim: 4
+  }
+  tl_pooling_param {
+    input: 1152
+    output: 0
+    avg_pool: false
+    kernel_size: 2
+    kernel_size: 2
+    stride: 2
+    stride: 2
+    pad: 0
+    pad: 0
+    pad: 0
+    pad: 0
+    if_relu: false
+  }
+  tl_transport_param {
+    name: "pool2_1"
+    global_shape {
+      dim: 1
+      dim: 50
+      dim: 4
+      dim: 4
+    }
+    local_shape {
+      dim: 1
+      dim: 50
+      dim: 4
+      dim: 4
+    }
+    global_offset: 784
+    local_address: 0
+    direction: 1
+    transpose: false
+    aligned: true
+    stage: POST
+  }
+}
+layer {
+  name: "groupend0"
+  type: "tl_group_end"
+  bottom: "pool2_1_0_0_0"
+  top: "pool2_1"
+  output_shape {
+    dim: 1
+    dim: 50
+    dim: 4
+    dim: 4
+    data_type_size: 1
+  }
+  global_output: 784
+  tl_group_param {
+    from_layer: "pool2_1"
+  }
+}
+layer {
+  name: "OC2_DUMMY_0"
+  type: "tg_reshape"
+  bottom: "pool2_1"
+  top: "OC2_DUMMY_0"
+  input_shape {
+    dim: 1
+    dim: 50
+    dim: 4
+    dim: 4
+    data_type_size: 1
+  }
+  output_shape {
+    dim: 1
+    dim: 800
+    data_type_size: 1
+  }
+  global_input: 784
+  global_output: 784
+}
+layer {
+  name: "ip1_1"
+  type: "tg_innerproduct"
+  bottom: "OC2_DUMMY_0"
+  top: "ip1_1"
+  input_shape {
+    dim: 1
+    dim: 800
+    data_type_size: 1
+  }
+  output_shape {
+    dim: 1
+    dim: 500
+    data_type_size: 1
+  }
+  global_input: 784
+  global_output: 0
+  tg_inner_product_param {
+    global_weight: 25640
+    global_bias: 425640
+    bias_term: true
+    num_output: 500
+    do_activation: false
+    weight_transpose: false
+  }
+}
+layer {
+  name: "customized1"
+  type: "tg_customized"
+  bottom: "ip1_1"
+  top: "customized1"
+  input_shape {
+    dim: 1
+    dim: 500
+    data_type_size: 1
+  }
+  output_shape {
+    dim: 1
+    dim: 500
+    data_type_size: 1
+  }
+  global_input: 0
+  global_output: 500
+  tg_customized_param {
+    sub_type: "LeakyRelu"
+    f32_param: 0.1
+  }
+}
+layer {
+  name: "ip2_1"
+  type: "tg_innerproduct"
+  bottom: "customized1"
+  top: "ip2_1"
+  input_shape {
+    dim: 1
+    dim: 500
+    data_type_size: 1
+  }
+  output_shape {
+    dim: 1
+    dim: 10
+    data_type_size: 1
+  }
+  global_input: 500
+  global_output: 0
+  tg_inner_product_param {
+    global_weight: 426640
+    global_bias: 431640
+    bias_term: true
+    num_output: 10
+    do_activation: false
+    weight_transpose: false
+  }
+}
+layer {
+  name: "customized2"
+  type: "ELU"
+  bottom: "ip2_1"
+  top: "customized2"
+  cpu_op: true
+  threshold_x: 13.757676
+  threshold_y: 13.757676
+  input_shape {
+    dim: 1
+    dim: 10
+    data_type_size: 1
+  }
+  output_shape {
+    dim: 1
+    dim: 10
+    data_type_size: 1
+  }
+  global_input: 0
+  global_output: 10
+  tg_customized_param {
+    sub_type: "Elu"
+    f32_param: 0.1
+  }
+}
+layer {
+  name: "end"
+  type: "end"
+  bottom: "customized2"
+  input_shape {
+    dim: 1
+    dim: 10
+    data_type_size: 1
+  }
+  end_param {
+    output_offset: 10
+    output_size: 10
+    total_neuron_size: 1584
+  }
+}

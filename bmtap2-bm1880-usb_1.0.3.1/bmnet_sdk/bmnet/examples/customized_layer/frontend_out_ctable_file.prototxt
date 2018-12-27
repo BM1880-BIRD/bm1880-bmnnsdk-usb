@@ -1,0 +1,88 @@
+layer {
+  name: "data_0"
+  blob_param {
+    name: "data_0"
+    threshold_y: 0.99658036
+  }
+}
+layer {
+  name: "conv1_1"
+  right_shift_width: 8
+  blob_param {
+    name: "conv1_1"
+    threshold_y: 1.3900347
+  }
+}
+layer {
+  name: "pool1_1"
+  right_shift_width: 8
+  threshold_x_quantized: 160
+  blob_param {
+    name: "pool1_1"
+    threshold_y: 2.2240555
+  }
+}
+layer {
+  name: "conv2_1"
+  right_shift_width: 10
+  blob_param {
+    name: "conv2_1"
+    threshold_y: 3.765456
+  }
+}
+layer {
+  name: "pool2_1"
+  right_shift_width: 7
+  threshold_x_quantized: 135
+  blob_param {
+    name: "pool2_1"
+    threshold_y: 3.561661
+  }
+}
+layer {
+  name: "OC2_DUMMY_0"
+  blob_param {
+    name: "OC2_DUMMY_0"
+    threshold_y: 3.561661
+  }
+  blob_param {
+    name: "OC2_DUMMY_2"
+    threshold_y: 0
+  }
+}
+layer {
+  name: "ip1_1"
+  right_shift_width: 11
+  blob_param {
+    name: "ip1_1"
+    threshold_y: 4.9610562
+  }
+}
+layer {
+  name: "customized1"
+  blob_param {
+    name: "customized1"
+    threshold_y: 4.9610562
+  }
+  relu_param {
+    gt_scale: 64
+    le_scale: 102
+    gt_right_shift_width: 6
+    le_right_shift_width: 10
+  }
+}
+layer {
+  name: "ip2_1"
+  right_shift_width: 10
+  blob_param {
+    name: "ip2_1"
+    threshold_y: 13.757676
+  }
+}
+layer {
+  name: "customized2"
+  blob_param {
+    name: "customized2"
+    threshold_y: 13.757676
+  }
+}
