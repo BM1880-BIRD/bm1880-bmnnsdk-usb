@@ -1,0 +1,10 @@
+libdir=/home/hinton/workspace/temp/bm1880/bmiva/bmtap2/build/bmnet/external/Install/bmnet_glow/lib
+includedir=/home/hinton/workspace/temp/bm1880/bmiva/bmtap2/build/bmnet/external/Install/bmnet_glow/include
+
+Name: gmock_main
+Description: GoogleMock (with main() function)
+Version: 1.9.0
+URL: https://github.com/google/googletest
+Requires: gmock
+Libs: -L${libdir} -lgmock_main -pthread
+Cflags: -I${includedir} -DGTEST_HAS_PTHREAD=1 -pthread
