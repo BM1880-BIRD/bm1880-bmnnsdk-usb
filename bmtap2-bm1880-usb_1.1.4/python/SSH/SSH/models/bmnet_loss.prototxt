@@ -1,0 +1,234 @@
+# ***************************************************************** #
+# SSH: Single Stage Headless Face Detector
+# Test Prototxt
+# Written by Mahyar Najibi
+# ***************************************************************** #
+
+name: "TinySSH"
+
+layer {
+  name: 'input-data'
+  type: 'Python'
+  top: 'data'
+  top: 'im_info'
+  top: 'gt_boxes'
+  python_param {
+    module: 'roi_data_layer.layer'
+    layer: 'RoIDataLayer'
+    param_str: "'num_classes': 2"
+  }
+}
+
+layer {
+  name: "bmnet"
+  type: "BMNet"
+  bottom: "data"
+  top: "m3@ssh_cls_score_output"
+  top: "m3@ssh_bbox_pred_output"
+  top: "m2@ssh_cls_score_output"
+  top: "m2@ssh_bbox_pred_output"
+  top: "m1@ssh_cls_score_output"
+  top: "m1@ssh_bbox_pred_output"
+  bmnet_param {
+    output_offset: 59008
+    output_offset: 59408
+    output_offset: 60208
+    output_offset: 61652
+    output_offset: 64540
+    output_offset: 70316
+    
+    output_shape {
+      dim: 1
+      dim: 4
+      dim: 10
+      dim: 10
+    }
+    output_shape {
+      dim: 1
+      dim: 8
+      dim: 10
+      dim: 10
+    }
+    output_shape {
+      dim: 1
+      dim: 4
+      dim: 19
+      dim: 19
+    }
+    output_shape {
+      dim: 1
+      dim: 8
+      dim: 19
+      dim: 19
+    }
+    output_shape {
+      dim: 1
+      dim: 4
+      dim: 38
+      dim: 38
+    }
+    output_shape {
+      dim: 1
+      dim: 8
+      dim: 38
+      dim: 38
+    }
+
+    output_size: 400
+    output_size: 800
+    output_size: 1444
+    output_size: 2888
+    output_size: 5776
+    output_size: 11552
+    total_neuron_size: 81868
+    in_threshold: 152.09416
+    out_threshold: 11.821479
+    out_threshold: 0.79796183
+    out_threshold: 9.3511314
+    out_threshold: 0.64522612
+    out_threshold: 7.9597945
+    out_threshold: 0.62301779
+    cmdbuf: "/home/min/code/bmtap2/bmnet/caffe/examples/bmnet/tinyssh_cmdbuf_int8.bin"
+    weight: "/home/min/code/bmtap2/bmnet/caffe/examples/bmnet/tinyssh_int8_weight.bin"
+  }
+}
+
+#========== M3@SSH =========
+layer {
+   name: "m3@ssh_cls_reshape"
+   type: "Reshape"
+   bottom: "m3@ssh_cls_score_output"
+   top: "m3@ssh_cls_score_reshape_output"
+   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
+}
+
+
+#========== M2@SSH =========
+layer {
+   bottom: "m2@ssh_cls_score_output"
+   top: "m2@ssh_cls_score_reshape_output"
+   name: "m2@ssh_cls_reshape"
+   type: "Reshape"
+   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
+}
+
+
+
+
+#========== M1@SSH =========
+layer {
+   bottom: "m1@ssh_cls_score_output"
+   top: "m1@ssh_cls_score_reshape_output"
+   name: "m1@ssh_cls_reshape"
+   type: "Reshape"
+   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
+}
+
+
+# Comput loss
+layer {
+  name: 'm1@ssh_target_layer'
+  type: 'Python'
+  bottom: 'm1@ssh_cls_score_output'
+  bottom: 'gt_boxes'
+  bottom: 'im_info'
+  bottom: 'data'
+  top: 'm1@ssh_anchor_labels'
+  top: 'm1@ssh_reg_tragets'
+  top: 'm1@ssh_reg_inside_weights'
+  top: 'm1@ssh_reg_outside_weights'
+  python_param {
+    module: 'SSH.layers.anchor_target_layer'
+    layer: 'AnchorTargetLayer'
+    param_str: "{'feat_stride': 8, 'base_size': 4, 'scales': [2,4], 'ratios':[1,], 'allowed_border': 16}"
+  }
+}
+layer {
+  name: "m1@ssh_cls_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "m1@ssh_cls_score_reshape_output"
+  bottom: "m1@ssh_anchor_labels"
+  propagate_down: 1
+  propagate_down: 0
+  top: "m1@ssh_cls_loss"
+  loss_weight: 1
+  loss_param {
+    ignore_label: -1
+    normalize: true
+  }
+}
+
+layer {
+  name: 'm2@ssh_target_layer'
+  type: 'Python'
+  bottom: 'm2@ssh_cls_score_output'
+  bottom: 'gt_boxes'
+  bottom: 'im_info'
+  bottom: 'data'
+  top: 'm2@ssh_anchor_labels'
+  top: 'm2@ssh_reg_tragets'
+  top: 'm2@ssh_reg_inside_weights'
+  top: 'm2@ssh_reg_outside_weights'
+  python_param {
+    module: 'SSH.layers.anchor_target_layer'
+    layer: 'AnchorTargetLayer'
+    param_str: "{'feat_stride': 8, 'base_size': 4, 'scales': [2,4], 'ratios':[1,], 'allowed_border': 16}"
+  }
+}
+layer {
+  name: "m2@ssh_cls_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "m2@ssh_cls_score_reshape_output"
+  bottom: "m2@ssh_anchor_labels"
+  propagate_down: 1
+  propagate_down: 0
+  top: "m2@ssh_cls_loss"
+  loss_weight: 1
+  loss_param {
+    ignore_label: -1
+    normalize: true
+  }
+}
+
+layer {
+  name: 'm3@ssh_target_layer'
+  type: 'Python'
+  bottom: 'm3@ssh_cls_score_output'
+  bottom: 'gt_boxes'
+  bottom: 'im_info'
+  bottom: 'data'
+  top: 'm3@ssh_anchor_labels'
+  top: 'm3@ssh_reg_tragets'
+  top: 'm3@ssh_reg_inside_weights'
+  top: 'm3@ssh_reg_outside_weights'
+  python_param {
+    module: 'SSH.layers.anchor_target_layer'
+    layer: 'AnchorTargetLayer'
+    param_str: "{'feat_stride': 8, 'base_size': 4, 'scales': [2,4], 'ratios':[1,], 'allowed_border': 16}"
+  }
+}
+layer {
+  name: "m3@ssh_cls_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "m3@ssh_cls_score_reshape_output"
+  bottom: "m3@ssh_anchor_labels"
+  propagate_down: 1
+  propagate_down: 0
+  top: "m3@ssh_cls_loss"
+  loss_weight: 1
+  loss_param {
+    ignore_label: -1
+    normalize: true
+  }
+}
+#layer {
+#  name: "m1@ssh_reg_loss"
+#  type: "SmoothL1Loss"
+#  bottom: "m1@ssh_bbox_pred_output"
+#  bottom: "m1@ssh_reg_tragets"
+#  bottom: 'm1@ssh_reg_inside_weights'
+#  bottom: 'm1@ssh_reg_outside_weights'
+#  top: "m1@ssh_reg_loss"
+#  loss_weight: 1
+#  smooth_l1_loss_param { sigma: 3.0 }
+#}

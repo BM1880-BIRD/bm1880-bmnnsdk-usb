@@ -1,0 +1,110 @@
+name: "lenet"
+layer {
+  name: "data"
+  threshold_y: 0.99658036232
+  threshold_y: 7.0034198761
+  blob_param {
+    name: "data"
+    threshold_y: 0.99658036232
+  }
+  blob_param {
+    name: "label"
+    threshold_y: 7.0034198761
+  }
+  top_unsigned: false
+  top_unsigned: false
+}
+layer {
+  name: "conv1"
+  threshold_y: 1.3900346756
+  right_shift_width: 8
+  blob_param {
+    name: "conv1"
+    threshold_y: 1.3900346756
+  }
+  bottom_unsigned: false
+  top_unsigned: false
+}
+layer {
+  name: "pool1"
+  threshold_y: 2.22405552864
+  right_shift_width: 8
+  threshold_x_quantized: 160
+  blob_param {
+    name: "pool1"
+    threshold_y: 2.22405552864
+  }
+  bottom_unsigned: false
+  top_unsigned: false
+}
+layer {
+  name: "conv2"
+  threshold_y: 3.76545572281
+  right_shift_width: 10
+  blob_param {
+    name: "conv2"
+    threshold_y: 3.76545572281
+  }
+  bottom_unsigned: false
+  top_unsigned: false
+}
+layer {
+  name: "pool2"
+  threshold_y: 3.56166100502
+  right_shift_width: 7
+  threshold_x_quantized: 135
+  blob_param {
+    name: "pool2"
+    threshold_y: 3.56166100502
+  }
+  bottom_unsigned: false
+  top_unsigned: false
+}
+layer {
+  name: "ip1"
+  threshold_y: 4.96105670929
+  right_shift_width: 11
+  blob_param {
+    name: "ip1"
+    threshold_y: 4.96105670929
+  }
+  bottom_unsigned: false
+  top_unsigned: false
+}
+layer {
+  name: "customized1"
+  threshold_y: 4.96105670929
+  blob_param {
+    name: "customized1"
+    threshold_y: 4.96105670929
+  }
+  bottom_unsigned: false
+  top_unsigned: false
+  relu_param {
+    gt_scale: 64
+    le_scale: 102
+    gt_right_shift_width: 6
+    le_right_shift_width: 10
+  }
+}
+layer {
+  name: "ip2"
+  threshold_y: 13.7576751709
+  right_shift_width: 10
+  blob_param {
+    name: "ip2"
+    threshold_y: 13.7576751709
+  }
+  bottom_unsigned: false
+  top_unsigned: false
+}
+layer {
+  name: "customized2"
+  threshold_y: 13.7576751709
+  blob_param {
+    name: "customized2"
+    threshold_y: 13.7576751709
+  }
+  bottom_unsigned: false
+  top_unsigned: false
+}
