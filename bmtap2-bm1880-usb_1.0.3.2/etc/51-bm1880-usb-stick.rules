@@ -1,1 +1,0 @@
-SUBSYSTEMS=="usb", ATTRS{idProduct}=="1000", GROUP="users", MODE="0666"
