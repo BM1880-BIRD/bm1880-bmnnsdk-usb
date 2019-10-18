@@ -32,3 +32,16 @@ bm1880-bmnnsdk usb mode
     4.Single input Concat will be removed from net if quantization isn't needed.  
     5.Now bm_builder finds layer type Input as bmodel's first layer. (Doesn't need to be data anymore!)  
 
+
+[Dependency]
+
+    version1.1.4 requires updating protobuf to version 3.6 with libprotobuf.so.17 
+    First, get code from https://github.com/protocolbuffers/protobuf/tree/3.6.x  
+    $ ./autogen.sh  
+    $ ./configure  
+    $ make  
+    $ sudo make install
+    $ sudo ldconfig
+    $ protoc --version
+    
+    
